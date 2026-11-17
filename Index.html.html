@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confeitaria D'Ana | Confeitando com amor & açucar  Delivery e Retiradas</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Playfair Display (Elegância) & Plus Jakarta Sans (Legibilidade Moderna) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Configuração de Cores e Fontes Customizadas no Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doceria: {
+                            rose: '#FCE7EE',
+                            roseSoft: '#FDF2F5',
+                            roseBlush: '#F9D8E2',
+                            roseDark: '#E8C2CD',
+                            roseAccent: '#D96B8A',
+                            chocolate: '#3D231A',
+                            chocolateLight: '#543327',
+                            caramel: '#C88A55',
+                            caramelHover: '#B07442',
+                            cream: '#FFF9FA',
+                            berry: '#C94466'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilização refinada da barra de rolagem */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FCE7EE;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #543327;
+            border-radius: 9999px;
+        }
+        
+        /* Animações suaves */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+
+        /* Esconder scrollbar em filtros horizontais mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-doceria-roseSoft via-doceria-rose to-doceria-roseBlush text-doceria-chocolate font-sans antialiased selection:bg-doceria-chocolate selection:text-doceria-roseSoft pb-28 md:pb-12 min-h-screen">
+
+    <!-- Notificação Toast Flutuante (Substitui alert()) -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 md:px-0"></div>
+
+    <!-- Cabeçalho Superior em Marrom Chocolate -->
+    <header class="sticky top-0 z-40 bg-doceria-chocolate/95 backdrop-blur-md border-b border-doceria-chocolateLight shadow-lg shadow-doceria-chocolate/15">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <!-- Marca -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-doceria-roseAccent to-doceria-caramel flex items-center justify-center text-white shadow-md shadow-black/20">
+                    <i class="ph-fill ph-cake text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-xl sm:text-2xl font-bold text-doceria-cream tracking-tight leading-none">
+                        Confeitaria D'Ana
+                    </h1>
+                    <p class="text-xs text-doceria-roseBlush font-medium mt-1 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Aberto agora • Pedidos via WhatsApp: (21) 99985-3128
+                    </p>
+                </div>
+            </div>
+
+            <!-- Botão Carrinho Desktop & Tablet -->
+            <button onclick="toggleCartDrawer(true)" class="relative flex items-center gap-3 bg-doceria-roseSoft hover:bg-white text-doceria-chocolate px-4 py-2.5 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 border border-doceria-roseDark">
+                <div class="relative">
+                    <i class="ph-fill ph-shopping-bag text-xl text-doceria-roseAccent"></i>
+                    <span id="header-cart-badge" class="hidden absolute -top-2 -right-2 bg-doceria-chocolate text-doceria-roseSoft text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                </div>
+                <div class="text-left hidden sm:block">
+                    <span class="block text-[10px] uppercase tracking-wider text-doceria-chocolateLight leading-none font-semibold">Sua Sacola</span>
+                    <span id="header-cart-total" class="text-sm font-bold text-doceria-chocolate">R$ 0,00</span>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- Banner Hero Acolhedor Rosa & Marrom -->
+    <section class="pt-6 pb-8 px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-gradient-to-r from-doceria-chocolate via-doceria-chocolateLight to-doceria-chocolate rounded-3xl p-6 sm:p-10 text-doceria-cream relative overflow-hidden shadow-xl shadow-doceria-chocolate/20 border border-doceria-roseAccent/30">
+                <!-- Elementos decorativos de fundo -->
+                <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-doceria-roseAccent/25 blur-2xl pointer-events-none"></div>
+                <div class="absolute right-24 -bottom-16 w-48 h-48 rounded-full bg-doceria-caramel/25 blur-2xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-doceria-rose/15 text-doceria-roseBlush text-xs font-semibold mb-3 border border-doceria-roseBlush/30">
+                        <i class="ph-fill ph-sparkle text-doceria-roseAccent"></i> Confeitaria Artesanal & Afetiva
+                    </span>
+                    <h2 class="font-serif text-2xl sm:text-4xl font-bold leading-tight mb-3 text-white">
+                        O equilíbrio perfeito entre chocolate nobre e doçura.
+                    </h2>
+                    <p class="text-doceria-roseBlush/90 text-sm sm:text-base mb-5 leading-relaxed">
+                        Produção diária com ingredientes selecionados e muito carinho. <strong class="text-doceria-rose bg-doceria-roseAccent/30 px-2 py-0.5 rounded-md">Frete Grátis</strong> em pedidos acima de R$ 60,00!
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-doceria-cream">
+                        <span class="flex items-center gap-1.5 bg-black/25 px-3 py-1.5 rounded-xl border border-white/10">
+                            <i class="ph-fill ph-clock text-doceria-roseAccent text-base"></i> 30 - 45 min
+                        </span>
+                        <span class="flex items-center gap-1.5 bg-black/25 px-3 py-1.5 rounded-xl border border-white/10">
+                            <i class="ph-fill ph-star text-doceria-caramel text-base"></i> 4.9 (500+ avaliações)
+                        </span>
+                        <span class="flex items-center gap-1.5 bg-black/25 px-3 py-1.5 rounded-xl border border-white/10">
+                            <i class="ph-fill ph-whatsapp-logo text-emerald-400 text-base"></i> (21) 99985-3128
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navegação de Categorias e Busca -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <!-- Pílulas de Filtro -->
+            <div id="category-filters" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <!-- Renderizado via JS -->
+            </div>
+
+            <!-- Barra de Busca -->
+            <div class="relative w-full md:w-72">
+                <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-doceria-chocolateLight text-lg"></i>
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Buscar bolo, brigadeiro, torta..." 
+                    oninput="handleSearch(this.value)"
+                    class="w-full pl-10 pr-4 py-2.5 bg-doceria-cream border border-doceria-roseDark rounded-2xl text-sm text-doceria-chocolate placeholder:text-doceria-chocolateLight/60 focus:outline-none focus:border-doceria-roseAccent focus:ring-2 focus:ring-doceria-roseAccent/20 transition-all shadow-xs"
+                >
+            </div>
+        </div>
+
+        <!-- Grade de Produtos -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Renderizado via JS -->
+        </div>
+    </main>
+
+    <!-- Rodapé Institucional -->
+    <footer class="max-w-6xl mx-auto px-4 sm:px-6 mt-16 pt-8 border-t border-doceria-roseDark/70 text-center sm:flex sm:items-center sm:justify-between text-xs text-doceria-chocolateLight">
+        <p class="font-medium">© 2022 <strong class="text-doceria-chocolate">Confeitaria D'Ana</strong> • Todos os direitos reservados.</p>
+        <p class="mt-2 sm:mt-0 flex items-center justify-center gap-1.5 font-semibold text-doceria-chocolate">
+            <i class="ph-fill ph-whatsapp-logo text-emerald-600 text-base"></i>
+            Atendimento WhatsApp: (21) 99985-3128
+        </p>
+    </footer>
+
+    <!-- Barra Flutuante Mobile na Parte Inferior -->
+    <div id="mobile-floating-cart" class="fixed bottom-4 left-4 right-4 z-30 md:hidden hidden animate-slide-up">
+        <button onclick="toggleCartDrawer(true)" class="w-full bg-doceria-chocolate text-doceria-cream p-4 rounded-2xl shadow-2xl shadow-doceria-chocolate/40 border border-doceria-roseAccent/40 flex items-center justify-between active:scale-[0.98] transition-transform">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-doceria-roseAccent text-white font-bold flex items-center justify-center text-sm shadow-xs" id="mobile-cart-count">
+                    0
+                </div>
+                <div class="text-left">
+                    <span class="block text-xs text-doceria-roseBlush">Ver sacola & finalizar</span>
+                    <span class="font-bold text-sm text-white" id="mobile-cart-total">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 font-semibold text-sm text-doceria-roseBlush">
+                <span>Continuar</span>
+                <i class="ph-bold ph-arrow-right"></i>
+            </div>
+        </button>
+    </div>
+
+    <!-- Overlay Escuro para o Drawer -->
+    <div id="drawer-overlay" onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-doceria-chocolate/65 backdrop-blur-xs z-50 hidden transition-opacity"></div>
+
+    <!-- Drawer Lateral de Carrinho & Checkout Completo -->
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-lg bg-doceria-roseSoft z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-doceria-roseDark">
+        
+        <!-- Cabeçalho do Drawer -->
+        <div class="px-6 py-5 bg-doceria-chocolate text-doceria-cream border-b border-doceria-chocolateLight flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2.5">
+                <i class="ph-fill ph-bag-simple text-2xl text-doceria-roseAccent"></i>
+                <h2 class="font-serif text-xl font-bold text-white">Finalizar Pedido</h2>
+            </div>
+            <button onclick="toggleCartDrawer(false)" class="w-9 h-9 rounded-xl bg-doceria-chocolateLight hover:bg-doceria-roseAccent text-doceria-cream flex items-center justify-center transition-colors">
+                <i class="ph-bold ph-x text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Corpo Rolável do Drawer -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            
+            <!-- Estado Vazio -->
+            <div id="empty-cart-view" class="py-12 text-center bg-doceria-cream rounded-3xl p-6 border border-doceria-roseDark">
+                <div class="w-20 h-20 rounded-full bg-doceria-rose mx-auto flex items-center justify-center text-doceria-roseAccent mb-4">
+                    <i class="ph-fill ph-cookie text-4xl"></i>
+                </div>
+                <h3 class="font-serif text-lg font-bold text-doceria-chocolate mb-1">Sua sacola está vazia</h3>
+                <p class="text-sm text-doceria-chocolateLight mb-6">Adicione nossas delícias artesanais para começar seu pedido.</p>
+                <button onclick="toggleCartDrawer(false)" class="px-6 py-2.5 bg-doceria-chocolate text-white rounded-xl text-sm font-semibold hover:bg-doceria-chocolateLight transition-colors">
+                    Explorar Cardápio
+                </button>
+            </div>
+
+            <!-- Conteúdo Ativo do Carrinho + Checkout -->
+            <div id="active-cart-view" class="hidden space-y-6">
+                
+                <!-- 1. Lista de Itens Selecionados -->
+                <div class="bg-doceria-cream rounded-2xl p-4 border border-doceria-roseDark shadow-xs">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-doceria-rose">
+                        <span class="text-xs font-bold uppercase tracking-wider text-doceria-chocolateLight">Itens Escolhidos</span>
+                        <button onclick="clearCart()" class="text-xs text-doceria-berry hover:underline font-semibold">Limpar sacola</button>
+                    </div>
+                    <div id="cart-items-list" class="divide-y divide-doceria-rose max-h-60 overflow-y-auto pr-1">
+                        <!-- Itens renderizados via JS -->
+                    </div>
+                </div>
+
+                <!-- 2. Resumo de Valores (Cálculo Automático) -->
+                <div class="bg-doceria-rose/90 rounded-2xl p-4 border border-doceria-roseDark space-y-2 shadow-xs">
+                    <div class="flex justify-between text-sm text-doceria-chocolateLight">
+                        <span>Subtotal dos doces</span>
+                        <span id="summary-subtotal" class="font-semibold text-doceria-chocolate">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-doceria-chocolateLight">
+                        <span class="flex items-center gap-1">
+                            Taxa de entrega
+                            <span id="free-shipping-badge" class="hidden text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-full">GRÁTIS</span>
+                        </span>
+                        <span id="summary-delivery" class="font-semibold text-doceria-chocolate">R$ 7,00</span>
+                    </div>
+                    <div id="free-shipping-progress" class="text-xs text-doceria-chocolate font-medium pt-1">
+                        <!-- Mensagem dinâmica de frete grátis -->
+                    </div>
+                    <div class="pt-2 border-t border-doceria-roseDark flex justify-between items-center">
+                        <span class="font-bold text-doceria-chocolate">Total do Pedido</span>
+                        <span id="summary-total" class="text-xl font-bold text-doceria-chocolate">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- 3. Cadastro Rápido & Localização GPS -->
+                <div class="bg-doceria-cream rounded-2xl p-5 border border-doceria-roseDark shadow-xs space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-doceria-chocolate text-doceria-roseSoft text-xs font-bold flex items-center justify-center">1</span>
+                        <h3 class="font-bold text-doceria-chocolate">Seus Dados & Entrega</h3>
+                    </div>
+
+                    <!-- Nome Completo -->
+                    <div>
+                        <label for="customer-name" class="block text-xs font-semibold text-doceria-chocolate mb-1">
+                            Nome Completo <span class="text-doceria-berry">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-user absolute left-3.5 top-1/2 -translate-y-1/2 text-doceria-chocolateLight"></i>
+                            <input 
+                                type="text" 
+                                id="customer-name" 
+                                placeholder="Ex: Maria Clara Oliveira"
+                                class="w-full pl-10 pr-4 py-2.5 bg-white border border-doceria-roseDark rounded-xl text-sm text-doceria-chocolate focus:outline-none focus:border-doceria-roseAccent focus:ring-2 focus:ring-doceria-roseAccent/20"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Botão de Solicitação de Localização Atual (GPS) -->
+                    <div class="p-3.5 rounded-xl bg-doceria-rose/70 border border-dashed border-doceria-roseAccent space-y-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <p class="text-xs font-bold text-doceria-chocolate flex items-center gap-1.5">
+                                    <i class="ph-fill ph-navigation-arrow text-doceria-roseAccent"></i>
+                                    Localização Exata para Entrega
+                                </p>
+                                <p class="text-[11px] text-doceria-chocolateLight mt-0.5">
+                                    Permita o acesso ao GPS para enviar a localização exata do seu endereço.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button 
+                            type="button" 
+                            id="btn-get-location" 
+                            onclick="requestUserLocation()"
+                            class="w-full py-2.5 px-4 bg-doceria-chocolate hover:bg-doceria-chocolateLight text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-xs active:scale-[0.99]"
+                        >
+                            <i class="ph-bold ph-map-pin text-doceria-roseBlush text-base"></i>
+                            <span id="btn-location-text">Permitir e Usar Localização Atual</span>
+                        </button>
+
+                        <!-- Feedback Visual da Localização Capturada -->
+                        <div id="location-status-box" class="hidden text-xs rounded-lg p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <i class="ph-fill ph-check-circle text-emerald-600 text-base shrink-0"></i>
+                                <span id="location-coords-text" class="truncate font-medium">Localização anexada!</span>
+                            </div>
+                            <a id="location-preview-link" href="#" target="_blank" class="text-[11px] font-bold underline text-emerald-700 shrink-0 hover:text-emerald-900">
+                                Ver mapa
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Endereço Completo -->
+                    <div>
+                        <label for="customer-address" class="block text-xs font-semibold text-doceria-chocolate mb-1">
+                            Endereço Completo (Rua, Nº, Bairro, Complemento) <span class="text-doceria-berry">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-house-line absolute left-3.5 top-3 text-doceria-chocolateLight"></i>
+                            <textarea 
+                                id="customer-address" 
+                                rows="2" 
+                                placeholder="Ex: Rua das Flores, 123 - Apto 402, Centro (Próximo à praça)"
+                                class="w-full pl-10 pr-4 py-2 bg-white border border-doceria-roseDark rounded-xl text-sm text-doceria-chocolate focus:outline-none focus:border-doceria-roseAccent focus:ring-2 focus:ring-doceria-roseAccent/20 resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Seletor Flutuante / Interativo de Pagamento -->
+                <div class="bg-doceria-cream rounded-2xl p-5 border border-doceria-roseDark shadow-xs space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-doceria-chocolate text-doceria-roseSoft text-xs font-bold flex items-center justify-center">2</span>
+                        <h3 class="font-bold text-doceria-chocolate">Forma de Pagamento</h3>
+                    </div>
+
+                    <!-- Seletor Estilo Pílula Flutuante Elevada -->
+                    <div class="bg-doceria-rose p-1.5 rounded-2xl border border-doceria-roseDark shadow-inner grid grid-cols-3 gap-1.5 relative">
+                        <!-- Opção Cartão -->
+                        <button 
+                            type="button" 
+                            onclick="selectPaymentMethod('Cartão')" 
+                            id="pay-btn-Cartão"
+                            class="payment-pill flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 bg-doceria-chocolate text-white shadow-md"
+                        >
+                            <i class="ph-fill ph-credit-card text-lg mb-1 text-doceria-roseBlush"></i>
+                            <span>Cartão</span>
+                        </button>
+
+                        <!-- Opção PIX -->
+                        <button 
+                            type="button" 
+                            onclick="selectPaymentMethod('PIX')" 
+                            id="pay-btn-PIX"
+                            class="payment-pill flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 text-doceria-chocolateLight hover:bg-white/70"
+                        >
+                            <i class="ph-fill ph-pix-logo text-lg mb-1"></i>
+                            <span>PIX</span>
+                        </button>
+
+                        <!-- Opção Dinheiro -->
+                        <button 
+                            type="button" 
+                            onclick="selectPaymentMethod('Dinheiro')" 
+                            id="pay-btn-Dinheiro"
+                            class="payment-pill flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 text-doceria-chocolateLight hover:bg-white/70"
+                        >
+                            <i class="ph-fill ph-money text-lg mb-1"></i>
+                            <span>Dinheiro</span>
+                        </button>
+                    </div>
+
+                    <!-- Detalhes Dinâmicos por Forma de Pagamento -->
+                    <div id="payment-details-box" class="text-xs text-doceria-chocolateLight bg-white p-3.5 rounded-xl border border-doceria-roseDark">
+                        <p id="payment-info-text" class="flex items-center gap-2 font-medium text-doceria-chocolate">
+                            <i class="ph-fill ph-device-mobile-camera text-doceria-roseAccent text-base"></i>
+                            Levamos a maquininha (Crédito ou Débito) até você.
+                        </p>
+
+                        <!-- Campo Condicional de Troco (Aparece apenas quando "Dinheiro" é selecionado) -->
+                        <div id="cash-change-container" class="hidden mt-3 pt-3 border-t border-doceria-roseDark space-y-2.5 animate-fade-in">
+                            <div class="flex items-center justify-between">
+                                <label for="cash-change-input" class="font-bold text-doceria-chocolate">
+                                    Troco para quanto?
+                                </label>
+                                <label class="inline-flex items-center gap-1.5 cursor-pointer text-[11px] font-semibold text-doceria-roseAccent">
+                                    <input type="checkbox" id="no-change-checkbox" onchange="toggleNoChange(this.checked)" class="rounded text-doceria-roseAccent focus:ring-0">
+                                    Não preciso de troco
+                                </label>
+                            </div>
+                            
+                            <div class="relative" id="cash-input-wrapper">
+                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-doceria-chocolate">R$</span>
+                                <input 
+                                    type="number" 
+                                    id="cash-change-input" 
+                                    step="0.01" 
+                                    min="0"
+                                    placeholder="Ex: 50,00 ou 100,00"
+                                    oninput="calculateCashChange()"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-doceria-roseSoft border border-doceria-roseAccent rounded-xl text-sm font-bold text-doceria-chocolate focus:outline-none focus:ring-2 focus:ring-doceria-roseAccent/30"
+                                >
+                            </div>
+
+                            <!-- Cálculo Automático do Troco -->
+                            <div id="calculated-change-display" class="hidden p-2.5 rounded-lg bg-doceria-rose border border-doceria-roseDark text-doceria-chocolate flex items-center justify-between font-semibold">
+                                <span>Troco a levar:</span>
+                                <span id="calculated-change-value" class="text-sm font-bold text-emerald-700">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Rodapé Fixo do Drawer com Botão WhatsApp -->
+        <div id="drawer-footer" class="hidden p-4 sm:p-6 bg-doceria-cream border-t border-doceria-roseDark shrink-0">
+            <button 
+                type="button" 
+                onclick="sendOrderToWhatsApp()"
+                class="w-full py-3.5 px-6 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2.5 text-base active:scale-[0.98]"
+            >
+                <i class="ph-fill ph-whatsapp-logo text-2xl"></i>
+                <span>Enviar Pedido no WhatsApp</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Lógica da Aplicação -->
+    <script>
+        // ==========================================
+        // 1. CONFIGURAÇÕES E CATÁLOGO DE PRODUTOS
+        // ==========================================
+        const STORE_WHATSAPP = "5521999853128"; // WhatsApp atualizado da empresa: (21) 99985-3128
+        const DELIVERY_FEE = 7.00;
+        const FREE_SHIPPING_THRESHOLD = 60.00;
+
+        const PRODUCTS = [
+            {
+                id: 1,
+                name: "Bolo no Pote Brigadeiro & Morango",
+                category: "Bolos no Pote",
+                price: 18.90,
+                description: "Massa fofinha de cacau 50%, brigadeiro cremoso belga e pedaços frescos de morango selecionados.",
+                image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80",
+                badge: "Mais Pedido"
+            },
+            {
+                id: 2,
+                name: "Copo da Felicidade Ninho & Nutella",
+                category: "Bolos no Pote",
+                price: 24.50,
+                description: "Camadas generosas de creme de Leite Ninho trufado, Nutella pura, brownie artesanal e morangos.",
+                image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80",
+                badge: "Favorito"
+            },
+            {
+                id: 3,
+                name: "Caixa 6 Brigadeiros Gourmet Sortidos",
+                category: "Brigadeiros Gourmet",
+                price: 22.00,
+                description: "Seleção artesanal: 2 Belga ao Leite, 2 Ninho com Nutella, 1 Morango Bicho de Pé e 1 Ferrero.",
+                image: "https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?auto=format&fit=crop&w=600&q=80",
+                badge: null
+            },
+            {
+                id: 4,
+                name: "Torta Banoffee Artesanal (Fatia)",
+                category: "Tortas & Fatias",
+                price: 19.90,
+                description: "Base crocante de biscoito amanteigado, doce de leite cozido cremoso, banana caramelizada e chantilly.",
+                image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=600&q=80",
+                badge: null
+            },
+            {
+                id: 5,
+                name: "Brownie Recheado Doce de Leite",
+                category: "Brigadeiros Gourmet",
+                price: 14.50,
+                description: "Casquinha crocante por fora, super úmido por dentro com recheio duplo de doce de leite cremoso.",
+                image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80",
+                badge: "Novidade"
+            },
+            {
+                id: 6,
+                name: "Torta Red Velvet com Cream Cheese",
+                category: "Tortas & Fatias",
+                price: 21.50,
+                description: "Massa aveludada vermelha com suave toque de cacau e recheio cremoso de cream cheese frosting.",
+                image: "https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?auto=format&fit=crop&w=600&q=80",
+                badge: null
+            },
+            {
+                id: 7,
+                name: "Combo Tarde Doce (Fatia + Cappuccino)",
+                category: "Combos & Bebidas",
+                price: 29.90,
+                description: "1 Fatia de Bolo Vulcão de Chocolate + 1 Cappuccino Gelado Cremoso 300ml com borda trufada.",
+                image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80",
+                badge: "Combo"
+            },
+            {
+                id: 8,
+                name: "Soda Italiana de Frutas Vermelhas",
+                category: "Combos & Bebidas",
+                price: 13.50,
+                description: "Refrescante água gaseificada com xarope artesanal de morango, framboesa e amora com gelo.",
+                image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80",
+                badge: null
+            },
+            {
+                id: 9,
+                name: "Bolo no Pote Prestígio Cremoso",
+                category: "Bolos no Pote",
+                price: 17.90,
+                description: "Massa de chocolate molhadinha intercalada com beijinho cremoso de coco fresco e ganache meio amargo.",
+                image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80",
+                badge: null
+            }
+        ];
+
+        // ==========================================
+        // 2. ESTADO DA APLICAÇÃO
+        // ==========================================
+        let state = {
+            cart: [],
+            selectedCategory: "Todos",
+            searchQuery: "",
+            paymentMethod: "Cartão",
+            noChangeNeeded: false,
+            cashAmount: 0,
+            userLocation: null
+        };
+
+        // ==========================================
+        // 3. UTILITÁRIOS DE FORMATAÇÃO E NOTIFICAÇÃO
+        // ==========================================
+        function formatCurrency(value) {
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const styles = {
+                success: 'bg-emerald-700 text-white border-emerald-500',
+                error: 'bg-doceria-berry text-white border-rose-300',
+                info: 'bg-doceria-chocolate text-doceria-cream border-doceria-roseAccent'
+            };
+
+            const icons = {
+                success: 'ph-check-circle',
+                error: 'ph-warning-circle',
+                info: 'ph-sparkle'
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-sm font-medium animate-fade-in ${styles[type] || styles.info}`;
+            toast.innerHTML = `
+                <i class="ph-fill ${icons[type] || icons.info} text-xl shrink-0"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // ==========================================
+        // 4. RENDERIZAÇÃO DO CATÁLOGO E FILTROS
+        // ==========================================
+        function renderCategories() {
+            const categories = ["Todos", ...new Set(PRODUCTS.map(p => p.category))];
+            const container = document.getElementById('category-filters');
+            
+            container.innerHTML = categories.map(cat => {
+                const isActive = state.selectedCategory === cat;
+                return `
+                    <button 
+                        onclick="selectCategory('${cat}')"
+                        class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+                            isActive 
+                            ? 'bg-doceria-chocolate text-doceria-roseSoft shadow-md shadow-doceria-chocolate/20' 
+                            : 'bg-doceria-cream text-doceria-chocolateLight hover:bg-white border border-doceria-roseDark'
+                        }"
+                    >
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectCategory(category) {
+            state.selectedCategory = category;
+            renderCategories();
+            renderProducts();
+        }
+
+        function handleSearch(query) {
+            state.searchQuery = query.toLowerCase().trim();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            
+            const filtered = PRODUCTS.filter(product => {
+                const matchesCat = state.selectedCategory === "Todos" || product.category === state.selectedCategory;
+                const matchesSearch = product.name.toLowerCase().includes(state.searchQuery) || 
+                                      product.description.toLowerCase().includes(state.searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-doceria-cream rounded-3xl border border-doceria-roseDark">
+                        <i class="ph ph-magnifying-glass text-4xl text-doceria-roseAccent mb-2"></i>
+                        <h3 class="font-serif text-lg font-bold text-doceria-chocolate">Nenhum doce encontrado</h3>
+                        <p class="text-sm text-doceria-chocolateLight">Tente buscar por outro termo ou categoria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(product => {
+                const cartItem = state.cart.find(item => item.product.id === product.id);
+                const qty = cartItem ? cartItem.quantity : 0;
+
+                return `
+                    <article class="bg-doceria-cream rounded-3xl border border-doceria-roseDark overflow-hidden shadow-sm hover:shadow-xl hover:shadow-doceria-chocolate/10 transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <!-- Imagem com Fallback Elegante -->
+                            <div class="relative h-48 overflow-hidden bg-doceria-rose">
+                                <img 
+                                    src="${product.image}" 
+                                    alt="${product.name}"
+                                    onerror="this.onerror=null; this.src='https://placehold.co/600x400/FCE7EE/3D231A?text=Doce+Encanto';"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                                ${product.badge ? `
+                                    <span class="absolute top-3 left-3 bg-doceria-chocolate/95 backdrop-blur-xs text-doceria-roseBlush text-[11px] font-bold px-3 py-1 rounded-full shadow-sm border border-doceria-roseAccent/30">
+                                        ${product.badge}
+                                    </span>
+                                ` : ''}
+                                <span class="absolute bottom-3 right-3 bg-doceria-cream/95 backdrop-blur-xs text-doceria-chocolate text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-doceria-roseDark/60">
+                                    ${product.category}
+                                </span>
+                            </div>
+
+                            <!-- Informações do Doce -->
+                            <div class="p-5">
+                                <h3 class="font-serif text-lg font-bold text-doceria-chocolate leading-snug mb-1.5">
+                                    ${product.name}
+                                </h3>
+                                <p class="text-xs text-doceria-chocolateLight leading-relaxed line-clamp-2">
+                                    ${product.description}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Preço e Controles de Compra -->
+                        <div class="px-5 pb-5 pt-3 flex items-center justify-between border-t border-doceria-rose mt-auto bg-white/60">
+                            <div>
+                                <span class="block text-[10px] text-doceria-chocolateLight uppercase font-semibold">Valor</span>
+                                <span class="text-lg font-bold text-doceria-chocolate">${formatCurrency(product.price)}</span>
+                            </div>
+
+                            ${qty === 0 ? `
+                                <button 
+                                    onclick="addToCart(${product.id})"
+                                    class="px-4 py-2.5 bg-doceria-chocolate hover:bg-doceria-chocolateLight text-doceria-roseSoft font-bold text-xs rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-1.5 active:scale-95"
+                                >
+                                    <i class="ph-bold ph-plus text-doceria-roseAccent"></i>
+                                    <span>Adicionar</span>
+                                </button>
+                            ` : `
+                                <div class="flex items-center gap-2 bg-doceria-rose p-1 rounded-xl border border-doceria-roseDark">
+                                    <button onclick="updateQuantity(${product.id}, -1)" class="w-8 h-8 rounded-lg bg-white text-doceria-chocolate hover:bg-doceria-chocolate hover:text-white flex items-center justify-center transition-colors font-bold">
+                                        <i class="ph-bold ph-minus text-xs"></i>
+                                    </button>
+                                    <span class="w-6 text-center text-sm font-bold text-doceria-chocolate">${qty}</span>
+                                    <button onclick="updateQuantity(${product.id}, 1)" class="w-8 h-8 rounded-lg bg-doceria-chocolate text-white hover:bg-doceria-chocolateLight flex items-center justify-center transition-colors font-bold">
+                                        <i class="ph-bold ph-plus text-xs"></i>
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 5. GERENCIAMENTO DO CARRINHO & SOMA AUTOMÁTICA
+        // ==========================================
+        function addToCart(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = state.cart.find(item => item.product.id === productId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                state.cart.push({ product, quantity: 1 });
+            }
+
+            showToast(`${product.name} adicionado à sacola!`, 'success');
+            syncUI();
+        }
+
+        function updateQuantity(productId, delta) {
+            const index = state.cart.findIndex(item => item.product.id === productId);
+            if (index === -1) return;
+
+            state.cart[index].quantity += delta;
+            if (state.cart[index].quantity <= 0) {
+                state.cart.splice(index, 1);
+            }
+
+            syncUI();
+        }
+
+        function clearCart() {
+            state.cart = [];
+            syncUI();
+            showToast("Sacola esvaziada.", "info");
+        }
+
+        function getCartTotals() {
+            const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+            const subtotal = state.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+            const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+            const delivery = subtotal > 0 ? (isFreeShipping ? 0 : DELIVERY_FEE) : 0;
+            const total = subtotal + delivery;
+
+            return { totalItems, subtotal, delivery, total, isFreeShipping };
+        }
+
+        function syncUI() {
+            renderProducts();
+            
+            const { totalItems, subtotal, delivery, total, isFreeShipping } = getCartTotals();
+
+            // Atualiza Header Desktop
+            const headerBadge = document.getElementById('header-cart-badge');
+            const headerTotal = document.getElementById('header-cart-total');
+            headerTotal.textContent = formatCurrency(total);
+            
+            if (totalItems > 0) {
+                headerBadge.textContent = totalItems;
+                headerBadge.classList.remove('hidden');
+            } else {
+                headerBadge.classList.add('hidden');
+            }
+
+            // Atualiza Barra Flutuante Mobile
+            const mobileBar = document.getElementById('mobile-floating-cart');
+            if (totalItems > 0) {
+                document.getElementById('mobile-cart-count').textContent = totalItems;
+                document.getElementById('mobile-cart-total').textContent = formatCurrency(total);
+                mobileBar.classList.remove('hidden');
+            } else {
+                mobileBar.classList.add('hidden');
+            }
+
+            // Atualiza Views do Drawer
+            const emptyView = document.getElementById('empty-cart-view');
+            const activeView = document.getElementById('active-cart-view');
+            const footer = document.getElementById('drawer-footer');
+
+            if (totalItems === 0) {
+                emptyView.classList.remove('hidden');
+                activeView.classList.add('hidden');
+                footer.classList.add('hidden');
+            } else {
+                emptyView.classList.add('hidden');
+                activeView.classList.remove('hidden');
+                footer.classList.remove('hidden');
+                renderCartItems();
+            }
+
+            // Atualiza Resumo Financeiro
+            document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('summary-delivery').textContent = isFreeShipping ? "R$ 0,00" : formatCurrency(delivery);
+            document.getElementById('summary-total').textContent = formatCurrency(total);
+
+            const freeBadge = document.getElementById('free-shipping-badge');
+            const freeProgress = document.getElementById('free-shipping-progress');
+
+            if (isFreeShipping) {
+                freeBadge.classList.remove('hidden');
+                freeProgress.innerHTML = `<i class="ph-fill ph-confetti text-doceria-roseAccent"></i> Parabéns! Você ganhou <strong>Entrega Grátis</strong>!`;
+            } else {
+                freeBadge.classList.add('hidden');
+                const missing = FREE_SHIPPING_THRESHOLD - subtotal;
+                freeProgress.innerHTML = `Faltam <strong>${formatCurrency(missing)}</strong> para você ganhar Entrega Grátis!`;
+            }
+
+            if (state.paymentMethod === 'Dinheiro') {
+                calculateCashChange();
+            }
+        }
+
+        function renderCartItems() {
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = state.cart.map(({ product, quantity }) => `
+                <div class="py-3 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img src="${product.image}" alt="${product.name}" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-doceria-roseDark">
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-bold text-doceria-chocolate truncate">${product.name}</h4>
+                            <span class="text-xs font-semibold text-doceria-roseAccent">${formatCurrency(product.price * quantity)}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 bg-doceria-rose p-1 rounded-xl border border-doceria-roseDark shrink-0">
+                        <button onclick="updateQuantity(${product.id}, -1)" class="w-6 h-6 rounded-lg bg-white text-doceria-chocolate hover:bg-doceria-roseSoft flex items-center justify-center text-xs font-bold">
+                            <i class="ph-bold ph-minus"></i>
+                        </button>
+                        <span class="w-5 text-center text-xs font-bold text-doceria-chocolate">${quantity}</span>
+                        <button onclick="updateQuantity(${product.id}, 1)" class="w-6 h-6 rounded-lg bg-doceria-chocolate text-white hover:bg-doceria-chocolateLight flex items-center justify-center text-xs font-bold">
+                            <i class="ph-bold ph-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+
+            if (open) {
+                overlay.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // ==========================================
+        // 6. GEOLOCALIZAÇÃO ATUAL (GPS DO CLIENTE)
+        // ==========================================
+        function requestUserLocation() {
+            if (!navigator.geolocation) {
+                showToast("Seu navegador não suporta geolocalização.", "error");
+                return;
+            }
+
+            const btn = document.getElementById('btn-get-location');
+            const btnText = document.getElementById('btn-location-text');
+            const statusBox = document.getElementById('location-status-box');
+
+            btn.disabled = true;
+            btnText.textContent = "Solicitando permissão GPS...";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
+
+                    state.userLocation = { lat, lng, mapsUrl };
+
+                    btn.disabled = false;
+                    btnText.textContent = "Atualizar Localização GPS";
+                    
+                    statusBox.classList.remove('hidden');
+                    document.getElementById('location-coords-text').textContent = `GPS Capturado (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                    document.getElementById('location-preview-link').href = mapsUrl;
+
+                    showToast("Localização exata capturada com sucesso!", "success");
+                },
+                (error) => {
+                    btn.disabled = false;
+                    btnText.textContent = "Tentar Localização Novamente";
+                    
+                    let errorMsg = "Não foi possível obter sua localização.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMsg = "Permissão de localização negada. Ative o GPS ou digite seu endereço.";
+                    }
+                    showToast(errorMsg, "error");
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // ==========================================
+        // 7. SELETOR DE PAGAMENTO E CÁLCULO DE TROCO
+        // ==========================================
+        function selectPaymentMethod(method) {
+            state.paymentMethod = method;
+
+            document.querySelectorAll('.payment-pill').forEach(btn => {
+                btn.classList.remove('bg-doceria-chocolate', 'text-white', 'shadow-md');
+                btn.classList.add('text-doceria-chocolateLight', 'hover:bg-white/70');
+                const icon = btn.querySelector('i');
+                if (icon) icon.classList.remove('text-doceria-roseBlush');
+            });
+
+            const activeBtn = document.getElementById(`pay-btn-${method}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-doceria-chocolateLight', 'hover:bg-white/70');
+                activeBtn.classList.add('bg-doceria-chocolate', 'text-white', 'shadow-md');
+                const icon = activeBtn.querySelector('i');
+                if (icon) icon.classList.add('text-doceria-roseBlush');
+            }
+
+            const infoText = document.getElementById('payment-info-text');
+            const cashContainer = document.getElementById('cash-change-container');
+
+            if (method === 'Cartão') {
+                infoText.innerHTML = `<i class="ph-fill ph-device-mobile-camera text-doceria-roseAccent text-base"></i> Levamos a maquininha (Crédito ou Débito) até você.`;
+                cashContainer.classList.add('hidden');
+            } else if (method === 'PIX') {
+                infoText.innerHTML = `<i class="ph-fill ph-qr-code text-doceria-roseAccent text-base"></i> Enviaremos a chave PIX no WhatsApp para confirmação rápida.`;
+                cashContainer.classList.add('hidden');
+            } else if (method === 'Dinheiro') {
+                infoText.innerHTML = `<i class="ph-fill ph-hand-coins text-doceria-roseAccent text-base"></i> Pagamento em espécie na entrega.`;
+                cashContainer.classList.remove('hidden');
+                calculateCashChange();
+            }
+        }
+
+        function toggleNoChange(checked) {
+            state.noChangeNeeded = checked;
+            const inputWrapper = document.getElementById('cash-input-wrapper');
+            const calcDisplay = document.getElementById('calculated-change-display');
+
+            if (checked) {
+                inputWrapper.classList.add('opacity-50', 'pointer-events-none');
+                calcDisplay.classList.add('hidden');
+            } else {
+                inputWrapper.classList.remove('opacity-50', 'pointer-events-none');
+                calculateCashChange();
+            }
+        }
+
+        function calculateCashChange() {
+            const inputVal = parseFloat(document.getElementById('cash-change-input').value) || 0;
+            state.cashAmount = inputVal;
+            const { total } = getCartTotals();
+
+            const calcDisplay = document.getElementById('calculated-change-display');
+            const calcValue = document.getElementById('calculated-change-value');
+
+            if (!state.noChangeNeeded && inputVal > total) {
+                const change = inputVal - total;
+                calcValue.textContent = formatCurrency(change);
+                calcDisplay.classList.remove('hidden');
+            } else {
+                calcDisplay.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // 8. INTEGRAÇÃO OFICIAL WHATSAPP (21999853128)
+        // ==========================================
+        function sendOrderToWhatsApp() {
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerAddress = document.getElementById('customer-address').value.trim();
+            const { totalItems, subtotal, delivery, total, isFreeShipping } = getCartTotals();
+
+            if (totalItems === 0) {
+                showToast("Adicione pelo menos um doce ao pedido!", "error");
+                return;
+            }
+
+            if (!customerName) {
+                showToast("Por favor, preencha seu Nome Completo.", "error");
+                document.getElementById('customer-name').focus();
+                return;
+            }
+
+            if (!customerAddress) {
+                showToast("Por favor, informe seu Endereço Completo.", "error");
+                document.getElementById('customer-address').focus();
+                return;
+            }
+
+            if (state.paymentMethod === 'Dinheiro' && !state.noChangeNeeded) {
+                if (state.cashAmount > 0 && state.cashAmount < total) {
+                    showToast(`O valor para troco (${formatCurrency(state.cashAmount)}) é menor que o total do pedido.`, "error");
+                    document.getElementById('cash-change-input').focus();
+                    return;
+                }
+            }
+
+            let msg = `🍰 *NOVO PEDIDO - CONFEITARIA D'ANA* 🍰\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            msg += `👤 *Cliente:* ${customerName}\n`;
+            msg += `📍 *Endereço:* ${customerAddress}\n`;
+            
+            if (state.userLocation) {
+                msg += `🛰️ *Localização Exata (GPS):*\n${state.userLocation.mapsUrl}\n`;
+            } else {
+                msg += `🛰️ *Localização GPS:* Não compartilhada\n`;
+            }
+
+            msg += `\n🛍️ *ITENS DO PEDIDO:*\n`;
+            state.cart.forEach(({ product, quantity }) => {
+                msg += `• ${quantity}x ${product.name} — ${formatCurrency(product.price * quantity)}\n`;
+            });
+
+            msg += `\n━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `💵 *Subtotal:* ${formatCurrency(subtotal)}\n`;
+            msg += `🛵 *Taxa de Entrega:* ${isFreeShipping ? 'GRÁTIS 🎉' : formatCurrency(delivery)}\n`;
+            msg += `💰 *TOTAL A PAGAR: ${formatCurrency(total)}*\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+            msg += `💳 *Forma de Pagamento:* ${state.paymentMethod}\n`;
+            
+            if (state.paymentMethod === 'Dinheiro') {
+                if (state.noChangeNeeded || state.cashAmount === 0) {
+                    msg += `🪙 *Troco:* Não precisa de troco (Valor exato)\n`;
+                } else {
+                    const changeToReturn = state.cashAmount - total;
+                    msg += `💵 *Troco para:* ${formatCurrency(state.cashAmount)}\n`;
+                    msg += `🪙 *Levar de troco:* ${formatCurrency(changeToReturn)}\n`;
+                }
+            }
+
+            msg += `\n✨ _Pedido enviado pelo Cardápio Digital_`;
+
+            const encodedMessage = encodeURIComponent(msg);
+            const whatsappUrl = `https://wa.me/${STORE_WHATSAPP}?text=${encodedMessage}`;
+
+            showToast("Redirecionando para o WhatsApp da doceria...", "success");
+            
+            setTimeout(() => {
+                window.open(whatsappUrl, '_blank');
+            }, 600);
+        }
+
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            renderProducts();
+            syncUI();
+        });
+    </script>
+</body>
+</html>
